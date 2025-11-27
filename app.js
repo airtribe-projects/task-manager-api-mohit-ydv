@@ -33,7 +33,7 @@ app.get('/tasks/:id', (req, res) => {
 app.get('/tasks/priority/:level', (req, res) => {
     const priorityId = req.params.level;
     if (!['low', 'high', 'normal'].includes(priorityId)) {
-        return res.status(400).send({ error: 'Priority must be low, medium, or high' });
+        return res.status(400).send({ error: 'Priority must be low, normal, or high' });
     }
     const tasks = data.tasks.filter(t => t.priority === priorityId);
     res.send(tasks)
@@ -49,7 +49,7 @@ app.post('/tasks', (req, res) => {
         return res.status(400).send({ error: 'Completed must be a boolean value' });
     }
     if (priority && !['low', 'high', 'normal'].includes(priority)) {
-        return res.status(400).send({ error: 'Priority must be low, medium, or high' });
+        return res.status(400).send({ error: 'Priority must be low, normal, or high' });
     }
 
     const maxId = data.tasks.reduce((max, task) => (task.id > max ? task.id : max), 0)
@@ -105,7 +105,7 @@ app.put('/tasks/:id', (req, res) => {
 });
 
 app.delete('/tasks/:id', (req, res) => {
-    const taskId = parseInt(req.params.id);
+    const taskId = parseInt(req.params.id, 10);
     const taskIndex = data.tasks.findIndex(t => t.id === taskId);
     if (taskIndex === -1) {
         return res.status(404).send({ error: 'Task not found' });
@@ -117,7 +117,9 @@ app.delete('/tasks/:id', (req, res) => {
         path.join(__dirname, 'task.json'),
         JSON.stringify(data, null, 2)
     );
-    res.status(200).send('Task deleted successfully');
+    res.status(200).send({
+        message: 'Task deleted successfully'
+    });
 });
 
 module.exports = app;
