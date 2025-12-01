@@ -32,8 +32,8 @@ app.get('/tasks/:id', (req, res) => {
 
 app.get('/tasks/priority/:level', (req, res) => {
     const priorityId = req.params.level;
-    if (!['low', 'high', 'normal'].includes(priorityId)) {
-        return res.status(400).send({ error: 'Priority must be low, normal, or high' });
+    if (!['low', 'high', 'medium'].includes(priorityId)) {
+        return res.status(400).send({ error: 'Priority must be low, medium, or high' });
     }
     const tasks = data.tasks.filter(t => t.priority === priorityId);
     res.send(tasks)
@@ -48,8 +48,8 @@ app.post('/tasks', (req, res) => {
     if (completed !== undefined && typeof completed !== 'boolean') {
         return res.status(400).send({ error: 'Completed must be a boolean value' });
     }
-    if (priority && !['low', 'high', 'normal'].includes(priority)) {
-        return res.status(400).send({ error: 'Priority must be low, normal, or high' });
+    if (priority && !['low', 'high', 'medium'].includes(priority)) {
+        return res.status(400).send({ error: 'Priority must be low, medium, or high' });
     }
 
     const maxId = data.tasks.reduce((max, task) => (task.id > max ? task.id : max), 0)
@@ -86,7 +86,8 @@ app.put('/tasks/:id', (req, res) => {
     if (
         (title !== undefined && (typeof title !== 'string' || title.trim() === '')) ||
         (completed !== undefined && typeof completed !== 'boolean') ||
-        (priority !== undefined && !['low', 'medium', 'high'].includes(priority))
+        (priority !== undefined && !['low', 'medium', 'high'].includes(priority)) ||
+        (description !== undefined && (typeof description !== 'string' || description.trim() === ''))
     ) {
         return res.status(400).send({ error: 'Invalid data' });
     }
